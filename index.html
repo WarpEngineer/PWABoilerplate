@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<title>PWA Boilerplate</title>
+		<link rel="manifest" href="/manifest.webmanifest">
+	</head>
+
+	<body>
+		<script>
+			// make sure that the browser supports Service Workers and register if so.
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker.register('/serviceworker.js').then( function(reg) { 
+					// registration successful
+					console.log('Registration successful.');
+					console.log('Scope: ', reg.scope);
+				}).catch(function(error) {
+					// failed
+					console.log('Registration failed: ', error);
+				});
+			}
+		</script>
+	</body>
+</html>

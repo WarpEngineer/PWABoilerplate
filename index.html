@@ -13,6 +13,15 @@
 					// registration successful
 					console.log('Registration successful.');
 					console.log('Scope: ', reg.scope);
+					// NOTE: the following can be used to request persistent storage.
+					if (navigator.storage && navigator.storage.persist) {
+						navigator.storage.persist().then(granted => {
+							if (granted)
+								console.log("Persistent storage granted");
+							else
+								console.log("Persistent storage denied");
+						});
+					}
 				}).catch(function(error) {
 					// failed
 					console.log('Registration failed: ', error);

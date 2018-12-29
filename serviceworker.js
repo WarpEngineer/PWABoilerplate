@@ -1,7 +1,8 @@
 // PWABoilerplate service worker file
 
-var cacheName    = 'pwaboilerplate_v1'; // name of cache to use
-var oldCacheName = 'pwaboilerplate_v0'; // name of cache from previous version of app. used to remove old cache.
+const cacheName    = 'pwaboilerplate_v1'; // name of cache to use.
+const oldCacheName = 'pwaboilerplate_v0'; // name of cache from previous version of app. used to remove old cache.
+const offlinePage  = './PWAOffline.html'; // page to load to show an offline status.
 
 // attach listener to 'beforeinstallprompt' event
 window.addEventListener('beforeinstallprompt', function(event) {
@@ -22,7 +23,7 @@ self.addEventListener('install', function(event) {
 	event.waitUntil(self.skipWaiting()); // trigger activate event to start immediately instead of waiting for a page reload
 	event.waitUntil(
 		caches.open(cacheName).then(
-			cache => cache.addAll([ '/index.html', '/index.js'])
+			cache => cache.addAll([ '/index.html', '/index.js', offlinePage ])
 		)
 	);
 });
@@ -40,20 +41,24 @@ self.addEventListener('fetch', function(event) {
 			function(response) {
 				// if found in the cache, return it, else fetch from server
 				if(response) return response;
-				var requestToCache = event.request.clone() 
-				return fetch(requestToCache).then(
+				var requestForCache = event.request.clone() 
+				return fetch(requestForCache).then(
 					function(response) {
 						if(!response || response.status !== 200) return reponse;
-						var responseToCache = response.clone();
+						var responseForCache = response.clone();
 						// cache the fetched result
 						caches.open(cacheName).then(
 							function(cache) {
-								cache.put(requestToCache, responseToCache);
+								cache.put(requestForCache, responseForCache);
 							}
 						);
 						return response;
 					}
-				);
+				).catch(error => {
+					// If fetch fails and trying to navigate to an html page, return offline page
+					if (event.request.method === 'GET' && event.request.headers.get('accept').includes('text/html'))
+						return caches.match(PWAOffline);
+				});
 			}
 		)
 	);

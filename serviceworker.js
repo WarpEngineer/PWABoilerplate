@@ -5,7 +5,7 @@ const oldCacheName = 'pwaboilerplate_v0'; // name of cache from previous version
 const offlinePage  = './PWAOffline.html'; // page to load to show an offline status.
 
 // attach listener to 'beforeinstallprompt' event
-window.addEventListener('beforeinstallprompt', function(event) {
+self.addEventListener('beforeinstallprompt', function(event) {
 	// NOTE: use the following 2 lines to cancel the Add to Home Screen prompt altogether
 	/*event.preventDefault();
 	return false;*/
@@ -23,7 +23,7 @@ self.addEventListener('install', function(event) {
 	event.waitUntil(self.skipWaiting()); // trigger activate event to start immediately instead of waiting for a page reload
 	event.waitUntil(
 		caches.open(cacheName).then(
-			cache => cache.addAll([ '/index.html', '/index.js', offlinePage ])
+			cache => cache.addAll([ '/', '/index.html', '/index.js', offlinePage ])
 		)
 	);
 });
@@ -63,8 +63,4 @@ self.addEventListener('fetch', function(event) {
 		)
 	);
 });
-
-// bookmark:L7.3
-//
-
 

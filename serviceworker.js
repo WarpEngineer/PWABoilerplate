@@ -31,6 +31,22 @@ self.addEventListener('install', function(event) {
 // attach listener to 'activate' event
 self.addEventListener('activate', function(event) {
 	event.waitUntil(self.clients.claim()); // claim all current clients to activate immediately instead of waiting for a page reload
+	event.waitUntil(
+		caches.keys().then(
+			function(cacheNames) {
+				return Promise.all(cacheNames.filter(
+						function(cacheName) {
+							// Return true to remove this cache
+							if(cacheName === oldCacheName)
+								return true;
+							return false;
+						}).map(function(cacheName) {
+							return caches.delete(cacheName);
+						})
+				);
+			}
+		) 
+	);
 });
 
 // attach listener to 'fetch' event
